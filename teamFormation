@@ -1,0 +1,74 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+
+
+import java.util.Map.Entry;
+class Result {
+
+    public static long teamFormation(List<Integer> score, int team_size, int k) {
+        if(team_size == 0){
+            return 0;
+        }
+        if(score.size() == 0 || score == null){
+            return 0;
+        }
+
+        int sum = 0;
+        //Map - val,minIndex
+        TreeMap<Integer,Integer> map = new TreeMap<Integer,Integer>(Collections.reverseOrder()); 
+        for (int j=0; j < team_size; j++) {
+            
+            int scoreSize = score.size();
+            int realK = k;
+            if (k > scoreSize) {
+                realK = scoreSize;
+            }
+            // create a Tree set and add from front and end index
+            map = new TreeMap<Integer,Integer>(Collections.reverseOrder()); 
+
+            int frontIndex = 0;
+            int endIndex = 0;
+
+            for (int i=0; i<realK; i++) {
+                frontIndex = i;
+                endIndex = score.size() -1 -i;
+
+                int frontScore = score.get(frontIndex);
+                int endScore = score.get(endIndex);
+                
+                // if contains key and has less than index compared to current one then add it
+                if(map.containsKey(frontScore) && (frontIndex < map.get(frontScore))){                   
+                    map.put(frontScore, frontIndex);
+                } else if(!map.containsKey(frontScore)){
+                     map.put(frontScore, frontIndex);
+                }
+                if(map.containsKey(endScore) && (endIndex < map.get(endScore))){                   
+                     map.put(endScore, endIndex);
+                } else if(!map.containsKey(endScore)){
+                       map.put(endScore, endIndex);
+                }
+                
+            }
+            // get the first one and remove from the list
+            Entry<Integer,Integer> ent = map.firstEntry();
+            int maxScore = ent.getKey();
+            int maxScoreIndex = ent.getValue();
+            sum += maxScore;
+            score.remove(maxScoreIndex);
+        }
+        return (long)sum;
+    }
+
+}
+
+public class Solution {
